@@ -55,10 +55,10 @@ public class Principal {
      * System.out.print(quadro[i]); }
      */
 
-    System.out.println("\n\n");
-    for (int i = 0; i < bits.length; i++) {
-      System.out.print(bits[i]);
-    }
+    /*
+     * System.out.println("\n\n"); for (int i = 0; i < bits.length; i++) {
+     * System.out.print(bits[i]); }
+     */
 
     CamadaFisicaTransmissora(bits);
   }
@@ -93,10 +93,10 @@ public class Principal {
         fluxoDeBits[(i * 2) + 1] = 0;
       }
     }
-    System.out.println("\n\nCodificacao Manchester :");
-    for (int i = 0; i < fluxoDeBits.length; i++) {
-      System.out.print(fluxoDeBits[i]);
-    }
+    /*
+     * System.out.println("\n\nCodificacao Manchester :"); for (int i = 0; i <
+     * fluxoDeBits.length; i++) { System.out.print(fluxoDeBits[i]); }
+     */
     return fluxoDeBits;
   }
 
@@ -130,10 +130,10 @@ public class Principal {
         }
       }
     }
-    System.out.println("\n\nCodificacao Manchester Diferencial:");
-    for (int i = 0; i < fluxoDeBits.length; i++) {
-      System.out.print(fluxoDeBits[i]);
-    }
+    /*
+     * System.out.println("\n\nCodificacao Manchester Diferencial:"); for (int i =
+     * 0; i < fluxoDeBits.length; i++) { System.out.print(fluxoDeBits[i]); }
+     */
     return fluxoDeBits;
   }
 
@@ -143,20 +143,21 @@ public class Principal {
     fluxoTransmissor = fluxoBrutoDeBits;
     fluxoReceptor = new int[fluxoTransmissor.length];
 
-    System.out.println("\n\nFluxo Transmissor: ");
-    for (int i = 0; i < fluxoTransmissor.length; i++) {
-      System.out.print(fluxoTransmissor[i]);
-    }
+    // System.out.println("\n\nFluxo Transmissor: ");
+    /*
+     * for (int i = 0; i < fluxoTransmissor.length; i++) {
+     * System.out.print(fluxoTransmissor[i]); }
+     */
 
     for (int i = 0; i < fluxoTransmissor.length; i++) {
       fluxoReceptor[i] = fluxoTransmissor[i];
       // Gui
     }
 
-    System.out.println("\nFluxo Receptor: ");
-    for (int i = 0; i < fluxoReceptor.length; i++) {
-      System.out.print(fluxoReceptor[i]);
-    }
+    /*
+     * System.out.println("\nFluxo Receptor: "); for (int i = 0; i <
+     * fluxoReceptor.length; i++) { System.out.print(fluxoReceptor[i]); }
+     */
 
     CamadaFisicaReceptora(fluxoReceptor);
   }
@@ -176,10 +177,12 @@ public class Principal {
         break;
     }
 
-    System.out.println("\n\nBits chegando na Camada Fisica Receptora: ");
-    for (int i = 0; i < bits.length; i++) {
-      System.out.print(bits[i]);
-    }
+    /*
+     * System.out.println("\n\nBits chegando na Camada Fisica Receptora: "); for
+     * (int i = 0; i < bits.length; i++) { System.out.print(bits[i]); }
+     */
+
+    CamadaDeAplicacaoReceptora(bits);
   }
 
   public static int[] CamadaFisicaReceptoraCodificacaoManchester(int fluxoBrutoDeBits[]) {
@@ -227,5 +230,29 @@ public class Principal {
     }
 
     return bits;
+  }
+
+  public static void CamadaDeAplicacaoReceptora(int bits[]) {
+    String aux = "";
+    // System.out.println("\n\n");
+    for (int i = 0; i < bits.length; i++) {
+      // System.out.println("Bit atual:" + bits[i]);
+      aux = aux.concat("" + bits[i]);
+    }
+
+    String mensagem = "";
+    System.out.println("\n\n");
+    for (int i = 0; i < bits.length / 8; i++) {
+      // System.out.println("\nSubstring Atual: " + aux.substring(i * 8, (i * 8) +
+      // 8));
+      mensagem = mensagem.concat("" + (char) Integer.parseInt(aux.substring(i * 8, (i * 8) + 8), 2));
+    }
+
+    // System.out.println("Mensagem:\n" + mensagem);
+    AplicacaoReceptora(mensagem);
+  }
+
+  public static void AplicacaoReceptora(String mensagem) {
+    System.out.println("A mensagem recebida foi: " + mensagem);
   }
 }
