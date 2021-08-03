@@ -1,6 +1,15 @@
+import java.util.LinkedList;
 import java.util.Scanner;
 
+import javax.swing.ImageIcon;
+
 public class Principal {
+
+  public static int tipoDeCodificacao = 0;
+  public static Janela janela = new Janela();
+  public static LinkedList<Integer> fila = new LinkedList<Integer>();
+  public static int quantidadeQuadros = 43;
+
   public static void main(String args[]) {
     // Chamar a AplicacaoTransmissora();
     AplicacaoTransmissora();
@@ -64,7 +73,6 @@ public class Principal {
   }
 
   public static void CamadaFisicaTransmissora(int bits[]) {
-    int tipoDeCodificacao = 2;
     int[] fluxoBrutoDeBits = new int[bits.length * 2];
     switch (tipoDeCodificacao) {
       case 0:
@@ -152,6 +160,73 @@ public class Principal {
     for (int i = 0; i < fluxoTransmissor.length; i++) {
       fluxoReceptor[i] = fluxoTransmissor[i];
       // Gui
+      if (fila.size() < 43) {
+        fila.addFirst(fluxoReceptor[i]);
+      } else {
+        fila.poll();
+        fila.addFirst(fluxoReceptor[i]);
+      }
+
+      System.out.println(fluxoReceptor[i]);
+
+      try {
+        System.out.println("Dormiu");
+        Thread.sleep(200);
+      } catch (InterruptedException ex) {
+        Thread.currentThread().interrupt();
+      }
+
+      if (tipoDeCodificacao == 0) {
+        for (int k = 0; k < fila.size(); k++) {
+          if (fila.get(k) == 0) {
+            janela.bits[k].setIcon(new ImageIcon("00.png"));
+          } else {
+            janela.bits[k].setIcon(new ImageIcon("11.png"));
+          }
+        }
+      } else {
+        for (int k = 0; k < fila.size(); k++) {
+          if (k == fila.size() - 1) {
+            if (fila.get(k) == 0) {
+              janela.bits[k].setIcon(new ImageIcon("00.png"));
+            } else {
+              janela.bits[k].setIcon(new ImageIcon("11.png"));
+            }
+          } else {
+            if (fila.get(k + 1) == 0) { // o anterior e 0
+              if (fila.get(k) == 0) {
+                janela.bits[k].setIcon(new ImageIcon("00.png"));
+              } else {
+                janela.bits[k].setIcon(new ImageIcon("10.png"));
+              }
+            } else { // o anterior e 1
+              if (fila.get(k) == 0) {
+                janela.bits[k].setIcon(new ImageIcon("01.png"));
+              } else {
+                janela.bits[k].setIcon(new ImageIcon("11.png"));
+              }
+            }
+          }
+          // janela.bits[k].setIcon(new ImageIcon("01.png"));
+        }
+      }
+    }
+    for (int i = 0; i < 43; i++) {
+      if (fila.size() < 43) {
+        fila.addFirst(3);
+      } else {
+        fila.poll();
+        fila.addFirst(3);
+      }
+    }
+    for (int k = 0; k < fila.size(); k++) {
+      janela.bits[k].setIcon(new ImageIcon("__.png"));
+      try {
+        System.out.println("Dormiu");
+        Thread.sleep(200);
+      } catch (InterruptedException ex) {
+        Thread.currentThread().interrupt();
+      }
     }
 
     /*
@@ -163,7 +238,6 @@ public class Principal {
   }
 
   public static void CamadaFisicaReceptora(int fluxoBrutoDeBits[]) {
-    int tipoDeCodificacao = 2;
     int[] bits = new int[fluxoBrutoDeBits.length / 2];
     switch (tipoDeCodificacao) {
       case 0:
