@@ -13,12 +13,14 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.concurrent.Semaphore;
 
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -50,6 +52,7 @@ public class Janela extends JFrame { // inicio da classe
 
   public JButton iniciar;
 
+  public static Semaphore semaforo = new Semaphore(0);
   // int tipoDeCodificacao = 0;
 
   String mensagem;
@@ -94,6 +97,9 @@ public class Janela extends JFrame { // inicio da classe
         botaoCodificacaoBinaria.setEnabled(false);
         botaoCodificacaoManchester.setEnabled(false);
         botaoCodificacaoManchesterDiferencial.setEnabled(false);
+        mensagem = JOptionPane.showInputDialog(null, "Digite a mensagem:");
+        campoTransmissora.setText("Mensagem: " + mensagem);
+        semaforo.release();
       }
     });
     painel.add(iniciar);

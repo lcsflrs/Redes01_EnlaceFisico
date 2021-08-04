@@ -1,11 +1,10 @@
 import java.util.LinkedList;
-import java.util.Scanner;
 
 import javax.swing.ImageIcon;
 
 public class Principal {
 
-  public static int tipoDeCodificacao = 0;
+  public static int tipoDeCodificacao = 1;
   public static Janela janela = new Janela();
   public static LinkedList<Integer> fila = new LinkedList<Integer>();
   public static int quantidadeQuadros = 43;
@@ -16,11 +15,11 @@ public class Principal {
   }
 
   public static void AplicacaoTransmissora() {
-    Scanner ler = new Scanner(System.in);
-    String mensagem;
-    System.out.println("Digite a mensagem que quer transmitir:");
-    mensagem = ler.nextLine();
-    CamadaDeAplicacaoTransmissora(mensagem);
+    try { // Inicio do try catch
+      janela.semaforo.acquire(); // uso de semaforo para melhor funcionamento da interface junto ao programa
+    } catch (InterruptedException ex) {
+    } // fim do try catch
+    CamadaDeAplicacaoTransmissora(janela.mensagem);
   }
 
   public static void CamadaDeAplicacaoTransmissora(String mensagem) {
@@ -46,6 +45,17 @@ public class Principal {
       }
       // System.out.println("ToBinaryString Com Zero: " + inserir);
       quadro[i] = inserir;
+    }
+
+    String binario = "";
+    for (int i = 0; i < quadro.length; i++) {
+      binario += quadro[i];
+      janela.campoDeTextoPalavra.setText(binario);
+      try {
+        Thread.sleep(25);
+      } catch (InterruptedException ex) {
+        Thread.currentThread().interrupt();
+      }
     }
 
     int[] bits = new int[quadro.length * 8];
@@ -84,6 +94,17 @@ public class Principal {
       case 2:
         fluxoBrutoDeBits = CamadaFisicaTransmissoraCodificacaoManchesterDiferencial(bits);
         break;
+    }
+
+    String mensagemCodificada = "";
+    for (int i = 0; i < fluxoBrutoDeBits.length; i++) {
+      mensagemCodificada += fluxoBrutoDeBits[i];
+      janela.campoDeTextoCodificado.setText(mensagemCodificada);
+      try {
+        Thread.sleep(25);
+      } catch (InterruptedException ex) {
+        Thread.currentThread().interrupt();
+      }
     }
 
     MeioDeComunicacao(fluxoBrutoDeBits);
@@ -163,15 +184,14 @@ public class Principal {
       if (fila.size() < 43) {
         fila.addFirst(fluxoReceptor[i]);
       } else {
-        fila.poll();
+        fila.removeLast();
         fila.addFirst(fluxoReceptor[i]);
       }
 
       System.out.println(fluxoReceptor[i]);
 
       try {
-        System.out.println("Dormiu");
-        Thread.sleep(200);
+        Thread.sleep(25);
       } catch (InterruptedException ex) {
         Thread.currentThread().interrupt();
       }
@@ -215,15 +235,14 @@ public class Principal {
       if (fila.size() < 43) {
         fila.addFirst(3);
       } else {
-        fila.poll();
+        fila.removeLast();
         fila.addFirst(3);
       }
     }
     for (int k = 0; k < fila.size(); k++) {
       janela.bits[k].setIcon(new ImageIcon("__.png"));
       try {
-        System.out.println("Dormiu");
-        Thread.sleep(200);
+        Thread.sleep(25);
       } catch (InterruptedException ex) {
         Thread.currentThread().interrupt();
       }
@@ -238,6 +257,18 @@ public class Principal {
   }
 
   public static void CamadaFisicaReceptora(int fluxoBrutoDeBits[]) {
+
+    String mensagem = "";
+    for (int i = 0; i < fluxoBrutoDeBits.length; i++) {
+      mensagem += fluxoBrutoDeBits[i];
+      janela.campoDeTextoDecodificado.setText(mensagem);
+      try {
+        Thread.sleep(25);
+      } catch (InterruptedException ex) {
+        Thread.currentThread().interrupt();
+      }
+    }
+
     int[] bits = new int[fluxoBrutoDeBits.length / 2];
     switch (tipoDeCodificacao) {
       case 0:
@@ -312,6 +343,12 @@ public class Principal {
     for (int i = 0; i < bits.length; i++) {
       // System.out.println("Bit atual:" + bits[i]);
       aux = aux.concat("" + bits[i]);
+      janela.campoDeTextoDecodificadoPalavra.setText(aux);
+      try {
+        Thread.sleep(25);
+      } catch (InterruptedException ex) {
+        Thread.currentThread().interrupt();
+      }
     }
 
     String mensagem = "";
@@ -327,6 +364,8 @@ public class Principal {
   }
 
   public static void AplicacaoReceptora(String mensagem) {
-    System.out.println("A mensagem recebida foi: " + mensagem);
+    janela.campoReceptora.setText("A mensagem recebida foi: " + mensagem); // atualizacao na interface da mensagem
+                                                                           // recebida
+
   }
 }
