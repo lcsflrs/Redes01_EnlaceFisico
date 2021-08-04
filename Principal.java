@@ -1,3 +1,17 @@
+/* *********************************************************************************
+* Autor: Lucas de Oliveira Alves Flores                                            *
+* Matricula: 201911916                                                             *
+* Inicio: 27 de julho de 2021                                    	                 *
+* Ultima alteracao: 03 de agosto de 2021                                           *
+* Funcao: Simular Tranmissao e Recepcao de Dados pela Camada Fisica                *
+********************************************************************************** */
+
+/* *********************************************************************************
+* Classe: Principal                                                                *
+* Funcao: Implementar os metodos que simulam as fases da tranmissao e recepcao     *
+* dos dados pela camada fisica                                                     *
+********************************************************************************** */
+
 import java.util.LinkedList;
 
 import javax.swing.ImageIcon;
@@ -13,15 +27,23 @@ public class Principal {
     AplicacaoTransmissora();
   }
 
-  public static void AplicacaoTransmissora() {
+  public static void AplicacaoTransmissora() { // Inicio Aplicacao Transmissora
     try {
       janela.semaforo.acquire();
     } catch (InterruptedException ex) {
     }
-    CamadaDeAplicacaoTransmissora(janela.mensagem);
-  }
 
-  public static void CamadaDeAplicacaoTransmissora(String mensagem) {
+    /*
+     * Chamada da Camada de Aplicacao Transmissora apenas depois que a mensagem foi
+     * digitada e o semaforo receber um release
+     */
+    CamadaDeAplicacaoTransmissora(janela.mensagem);
+  } // Fim AplicacaoTransmissora
+
+  public static void CamadaDeAplicacaoTransmissora(String mensagem) {// Inicio Camada de Aplicacao Transmissora
+
+    // Conversao de cada Caractere da String mensagem para um array de String
+    // contendo os respectivos Binarios
     String[] quadro = new String[mensagem.length()];
     for (int i = 0; i < mensagem.length(); i++) {
       char converterAscii = mensagem.charAt(i);
@@ -36,17 +58,20 @@ public class Principal {
       quadro[i] = inserir;
     }
 
+    /* Trecho de Codigo apenas para exibicao na Interface */
     String binario = "";
     for (int i = 0; i < quadro.length; i++) {
       binario += quadro[i];
       janela.campoDeTextoPalavra.setText(binario);
       try {
-        Thread.sleep(25);
+        Thread.sleep(30);
       } catch (InterruptedException ex) {
         Thread.currentThread().interrupt();
       }
     }
 
+    // Conversao do Array de Strings de tamanho 8 para um Array (8 vezes maior) de
+    // Int
     int[] bits = new int[quadro.length * 8];
     for (int i = 0; i < quadro.length; i++) {
       for (int k = 0; k < quadro[i].length(); k++) {
@@ -54,10 +79,11 @@ public class Principal {
       }
     }
 
+    // Chamada da CamadaFisicaTransmissora
     CamadaFisicaTransmissora(bits);
-  }
+  } // Fim Camada de Aplicacao Transmissora
 
-  public static void CamadaFisicaTransmissora(int bits[]) {
+  public static void CamadaFisicaTransmissora(int bits[]) { // Inicio da Camada Fisica Transmissora
     int[] fluxoBrutoDeBits = new int[bits.length * 2];
     switch (tipoDeCodificacao) {
       case 0:
@@ -71,6 +97,7 @@ public class Principal {
         break;
     }
 
+    /* Trecho de Codigo apenas para exibicao na Interface */
     String mensagemCodificada = "";
     for (int i = 0; i < fluxoBrutoDeBits.length; i++) {
       mensagemCodificada += fluxoBrutoDeBits[i];
@@ -82,10 +109,11 @@ public class Principal {
       }
     }
 
+    // Chamada da MeioDeComunicacao
     MeioDeComunicacao(fluxoBrutoDeBits);
-  }
+  } // Fim da Camada Fisica Transmissora
 
-  public static int[] CamadaFisicaTransmissoraCodificacaoManchester(int bits[]) {
+  public static int[] CamadaFisicaTransmissoraCodificacaoManchester(int bits[]) { // Inicio da Codificacao Manchester
     int[] fluxoDeBits = new int[bits.length * 2];
 
     for (int i = 0; i < bits.length; i++) {
@@ -99,8 +127,9 @@ public class Principal {
     }
 
     return fluxoDeBits;
-  }
+  } // Fim da Codificacao Manchester
 
+  // Inicio da Codificacao Manchester Diferencial
   public static int[] CamadaFisicaTransmissoraCodificacaoManchesterDiferencial(int bits[]) {
     int[] fluxoDeBits = new int[bits.length * 2];
 
@@ -133,9 +162,9 @@ public class Principal {
     }
 
     return fluxoDeBits;
-  }
+  } // Fim da Codificacao Manchester Diferencial
 
-  public static void MeioDeComunicacao(int fluxoBrutoDeBits[]) {
+  public static void MeioDeComunicacao(int fluxoBrutoDeBits[]) { // Inicio do Meio de Comunicacao
     int[] fluxoTransmissor, fluxoReceptor;
 
     fluxoTransmissor = fluxoBrutoDeBits;
@@ -200,6 +229,8 @@ public class Principal {
         fila.addFirst(3);
       }
     }
+
+    /* Trecho de Codigo apenas para exibicao na Interface */
     for (int k = 0; k < fila.size(); k++) {
       janela.bits[k].setIcon(new ImageIcon("__.png"));
       try {
@@ -209,11 +240,14 @@ public class Principal {
       }
     }
 
+    // Chamada da CamadaFisicaReceptora
     CamadaFisicaReceptora(fluxoReceptor);
-  }
+  } // Fim do Meio de Comunicacao
 
+  // Inicio da Camada Fisica Receptora
   public static void CamadaFisicaReceptora(int fluxoBrutoDeBits[]) {
 
+    /* Trecho de Codigo apenas para exibicao na Interface */
     String mensagem = "";
     for (int i = 0; i < fluxoBrutoDeBits.length; i++) {
       mensagem += fluxoBrutoDeBits[i];
@@ -238,9 +272,11 @@ public class Principal {
         break;
     }
 
+    // Chamada CamadaAplicacaoReceptora
     CamadaDeAplicacaoReceptora(bits);
-  }
+  } // Fim da Camada Fisica Receptora
 
+  // Inicio da Camada Fisica Receptora de Decoficacao Manchester
   public static int[] CamadaFisicaReceptoraCodificacaoManchester(int fluxoBrutoDeBits[]) {
     int[] bits = new int[fluxoBrutoDeBits.length / 2];
     for (int i = 0; i < fluxoBrutoDeBits.length / 2; i++) {
@@ -252,8 +288,9 @@ public class Principal {
     }
 
     return bits;
-  }
+  } // Fim da Camada Fisica Receptora de Decoficacao Manchester
 
+  // Inicio da Camada Fisica Receptora de Decoficacao Manchester
   public static int[] CamadaFisicaReceptoraCodificacaoManchesterDiferencial(int fluxoBrutoDeBits[]) {
     int[] bits = new int[fluxoBrutoDeBits.length / 2];
     int contador = 0;
@@ -285,13 +322,14 @@ public class Principal {
     }
 
     return bits;
-  }
+  } // Fim da Camada Fisica Receptora de Decoficacao Manchester Diferencial
 
+  // Inicio da Camada de Aplicacao Receptora
   public static void CamadaDeAplicacaoReceptora(int bits[]) {
     String aux = "";
 
     for (int i = 0; i < bits.length; i++) {
-
+      /* Trecho de Codigo apenas para exibicao na Interface */
       aux = aux.concat("" + bits[i]);
       janela.campoDeTextoDecodificadoPalavra.setText(aux);
       try {
@@ -303,15 +341,14 @@ public class Principal {
 
     String mensagem = "";
     for (int i = 0; i < bits.length / 8; i++) {
-
       mensagem = mensagem.concat("" + (char) Integer.parseInt(aux.substring(i * 8, (i * 8) + 8), 2));
     }
 
+    // Chamada AplicacaoReceptora
     AplicacaoReceptora(mensagem);
-  }
+  } // Fim da Camada de Aplicacao Receptora
 
-  public static void AplicacaoReceptora(String mensagem) {
+  public static void AplicacaoReceptora(String mensagem) { // Inicio Aplicacao Receptora
     janela.campoReceptora.setText("A mensagem recebida foi: " + mensagem);
-
-  }
+  }// Fim Aplicacao Receptora
 }

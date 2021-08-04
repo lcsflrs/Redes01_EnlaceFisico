@@ -1,11 +1,15 @@
-/* ********************************************************************
-* Autor: Marcelo Figueiredo Gonçalves
-* Matricula: 201510252
-* Inicio: 26 de Outubro de 2016
-* Ultima alteracao: 27 de Outubro de 2016
-* Nome: Simulacao da Camada Fisica
-* Funcao: Simular o funcionamento da camada fisica em transmissao de dados simples
-********************************************************************* */
+/* *********************************************************************************
+* Autor: Lucas de Oliveira Alves Flores                                            *
+* Matricula: 201911916                                                             *
+* Inicio: 27 de julho de 2021                                    	                 *
+* Ultima alteracao: 03 de agosto de 2021                                           *
+* Funcao: Simular Tranmissao e Recepcao de Dados pela Camada Fisica                *
+********************************************************************************** */
+
+/* *********************************************************************************
+* Classe: Principal                                                                *
+* Funcao: Implementar a classe Janela, criando a GUI                               *
+********************************************************************************** */
 
 import java.awt.Color;
 import java.awt.Font;
@@ -28,32 +32,32 @@ import javax.swing.SwingConstants;
 
 public class Janela extends JFrame {
 
+  /* Declaracoes referentes a interface */
   private JPanel painel;
-
   private JLabel background, labelCodificacaoTransmissao, labelCodificacaoRecepcao;
-
   private ImageIcon imagemBackground;
-
   public JTextArea campoDeTextoPalavra, campoDeTextoCodificado, campoDeTextoDecodificado,
       campoDeTextoDecodificadoPalavra, campoTransmissora, campoReceptora;
-
   public JScrollPane scrollPanePalavra, scrollPaneCodificado, scrollPaneDecodificado, scrollPaneDecodificadoPalavra,
       scrollTransmissora, scrollReceptora;
-
   public ButtonGroup grupoDeBotoes;
   public JRadioButton botaoCodificacaoBinaria, botaoCodificacaoManchester, botaoCodificacaoManchesterDiferencial;
   public JPanel painelRadio;
-
   public JPanel meioDeComunicacao;
   public JLabel[] bits;
-
   public JButton iniciar;
 
+  /* Declaracao de um Semaforo para auxiliar no inicio da transmissao */
   public static Semaphore semaforo = new Semaphore(0);
 
   String mensagem;
 
   public Janela() {
+
+    /*****************************************/
+    /* Implementacoes referentes a interface */
+    /*****************************************/
+
     super("Camada Fisica");
     setSize(910, 550);
     setLayout(null);
