@@ -10,15 +10,14 @@ public class Principal {
   public static int quantidadeQuadros = 43;
 
   public static void main(String args[]) {
-    // Chamar a AplicacaoTransmissora();
     AplicacaoTransmissora();
   }
 
   public static void AplicacaoTransmissora() {
-    try { // Inicio do try catch
-      janela.semaforo.acquire(); // uso de semaforo para melhor funcionamento da interface junto ao programa
+    try {
+      janela.semaforo.acquire();
     } catch (InterruptedException ex) {
-    } // fim do try catch
+    }
     CamadaDeAplicacaoTransmissora(janela.mensagem);
   }
 
@@ -26,24 +25,14 @@ public class Principal {
     String[] quadro = new String[mensagem.length()];
     for (int i = 0; i < mensagem.length(); i++) {
       char converterAscii = mensagem.charAt(i);
-      // System.out.println("\n\nConverterAscii: " + converterAscii);
       int codigoAscii = (int) converterAscii;
-      // System.out.println("CodigoAscii: " + codigoAscii);
       String inserir = Integer.toBinaryString(codigoAscii);
-      // System.out.println("ToBinaryString: " + Integer.toBinaryString(codigoAscii));
-      // // System.out.println("ParseInt: " +
-      // Integer.parseInt(Integer.toBinaryString(codigoAscii)));
       if (inserir.length() < 8) {
-        // System.out.println("\n");
         while (inserir.length() < 8) {
-          // System.out.println("Diferenca a 8 bits: " + (8 - inserir.length()));
           String zero = "0";
           inserir = zero.concat(inserir);
         }
-        // System.out.println("Saiu do IF \n");
-
       }
-      // System.out.println("ToBinaryString Com Zero: " + inserir);
       quadro[i] = inserir;
     }
 
@@ -60,24 +49,10 @@ public class Principal {
 
     int[] bits = new int[quadro.length * 8];
     for (int i = 0; i < quadro.length; i++) {
-      // System.out.println("\n\nStringAtual: " + quadro[i]);
       for (int k = 0; k < quadro[i].length(); k++) {
-        // System.out.println("\n\nIndex: " + k);
-        // System.out.println("CharAt: " + quadro[i].charAt(k));
-        // System.out.println("Char Get Numeric: " +
-        // Character.getNumericValue(quadro[i].charAt(k)));
         bits[i * 8 + k] = Character.getNumericValue(quadro[i].charAt(k));
       }
     }
-    /*
-     * System.out.println("\n\n"); for (int i = 0; i < quadro.length; i++) {
-     * System.out.print(quadro[i]); }
-     */
-
-    /*
-     * System.out.println("\n\n"); for (int i = 0; i < bits.length; i++) {
-     * System.out.print(bits[i]); }
-     */
 
     CamadaFisicaTransmissora(bits);
   }
@@ -122,10 +97,7 @@ public class Principal {
         fluxoDeBits[(i * 2) + 1] = 0;
       }
     }
-    /*
-     * System.out.println("\n\nCodificacao Manchester :"); for (int i = 0; i <
-     * fluxoDeBits.length; i++) { System.out.print(fluxoDeBits[i]); }
-     */
+
     return fluxoDeBits;
   }
 
@@ -159,10 +131,7 @@ public class Principal {
         }
       }
     }
-    /*
-     * System.out.println("\n\nCodificacao Manchester Diferencial:"); for (int i =
-     * 0; i < fluxoDeBits.length; i++) { System.out.print(fluxoDeBits[i]); }
-     */
+
     return fluxoDeBits;
   }
 
@@ -172,23 +141,15 @@ public class Principal {
     fluxoTransmissor = fluxoBrutoDeBits;
     fluxoReceptor = new int[fluxoTransmissor.length];
 
-    // System.out.println("\n\nFluxo Transmissor: ");
-    /*
-     * for (int i = 0; i < fluxoTransmissor.length; i++) {
-     * System.out.print(fluxoTransmissor[i]); }
-     */
-
     for (int i = 0; i < fluxoTransmissor.length; i++) {
       fluxoReceptor[i] = fluxoTransmissor[i];
-      // Gui
+
       if (fila.size() < 43) {
         fila.addFirst(fluxoReceptor[i]);
       } else {
         fila.removeLast();
         fila.addFirst(fluxoReceptor[i]);
       }
-
-      System.out.println(fluxoReceptor[i]);
 
       try {
         Thread.sleep(25);
@@ -213,13 +174,13 @@ public class Principal {
               janela.bits[k].setIcon(new ImageIcon("11.png"));
             }
           } else {
-            if (fila.get(k + 1) == 0) { // o anterior e 0
+            if (fila.get(k + 1) == 0) {
               if (fila.get(k) == 0) {
                 janela.bits[k].setIcon(new ImageIcon("00.png"));
               } else {
                 janela.bits[k].setIcon(new ImageIcon("10.png"));
               }
-            } else { // o anterior e 1
+            } else {
               if (fila.get(k) == 0) {
                 janela.bits[k].setIcon(new ImageIcon("01.png"));
               } else {
@@ -227,7 +188,7 @@ public class Principal {
               }
             }
           }
-          // janela.bits[k].setIcon(new ImageIcon("01.png"));
+
         }
       }
     }
@@ -247,11 +208,6 @@ public class Principal {
         Thread.currentThread().interrupt();
       }
     }
-
-    /*
-     * System.out.println("\nFluxo Receptor: "); for (int i = 0; i <
-     * fluxoReceptor.length; i++) { System.out.print(fluxoReceptor[i]); }
-     */
 
     CamadaFisicaReceptora(fluxoReceptor);
   }
@@ -282,11 +238,6 @@ public class Principal {
         break;
     }
 
-    /*
-     * System.out.println("\n\nBits chegando na Camada Fisica Receptora: "); for
-     * (int i = 0; i < bits.length; i++) { System.out.print(bits[i]); }
-     */
-
     CamadaDeAplicacaoReceptora(bits);
   }
 
@@ -315,8 +266,7 @@ public class Principal {
     contador++;
 
     for (int i = 2; i < fluxoBrutoDeBits.length; i += 2) {
-      // System.out.println("\nBit Anterior: " + fluxoBrutoDeBits[i - 1]);
-      // System.out.println("Bit Atual: " + fluxoBrutoDeBits[i]);
+
       if (fluxoBrutoDeBits[i - 1] == 0) {
         if (fluxoBrutoDeBits[i] == 1) {
           bits[contador] = 0;
@@ -330,7 +280,7 @@ public class Principal {
           bits[contador] = 0;
         }
       }
-      // System.out.println("Bit Traduzido: " + bits[contador]);
+
       contador++;
     }
 
@@ -339,9 +289,9 @@ public class Principal {
 
   public static void CamadaDeAplicacaoReceptora(int bits[]) {
     String aux = "";
-    // System.out.println("\n\n");
+
     for (int i = 0; i < bits.length; i++) {
-      // System.out.println("Bit atual:" + bits[i]);
+
       aux = aux.concat("" + bits[i]);
       janela.campoDeTextoDecodificadoPalavra.setText(aux);
       try {
@@ -352,20 +302,16 @@ public class Principal {
     }
 
     String mensagem = "";
-    System.out.println("\n\n");
     for (int i = 0; i < bits.length / 8; i++) {
-      // System.out.println("\nSubstring Atual: " + aux.substring(i * 8, (i * 8) +
-      // 8));
+
       mensagem = mensagem.concat("" + (char) Integer.parseInt(aux.substring(i * 8, (i * 8) + 8), 2));
     }
 
-    // System.out.println("Mensagem:\n" + mensagem);
     AplicacaoReceptora(mensagem);
   }
 
   public static void AplicacaoReceptora(String mensagem) {
-    janela.campoReceptora.setText("A mensagem recebida foi: " + mensagem); // atualizacao na interface da mensagem
-                                                                           // recebida
+    janela.campoReceptora.setText("A mensagem recebida foi: " + mensagem);
 
   }
 }

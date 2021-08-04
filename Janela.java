@@ -7,7 +7,6 @@
 * Funcao: Simular o funcionamento da camada fisica em transmissao de dados simples
 ********************************************************************* */
 
-// importacoes necessarias para funcionamento da interface e eventos relacionados
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -27,9 +26,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 
-public class Janela extends JFrame { // inicio da classe
-
-  // declara-se tudo que eh utilizado
+public class Janela extends JFrame {
 
   private JPanel painel;
 
@@ -53,21 +50,17 @@ public class Janela extends JFrame { // inicio da classe
   public JButton iniciar;
 
   public static Semaphore semaforo = new Semaphore(0);
-  // int tipoDeCodificacao = 0;
 
   String mensagem;
 
-  public Janela() { // inicio do construtor
-    super("Camada Fisica"); // nome
-    setSize(910, 550); // tamanho
-    setLayout(null); // layout
-    setResizable(false); // tamanho fixo
-    setLocationRelativeTo(null); // posicionado ao meio
-    setDefaultCloseOperation(EXIT_ON_CLOSE); // fechar ao apertar "X"
+  public Janela() {
+    super("Camada Fisica");
+    setSize(910, 550);
+    setLayout(null);
+    setResizable(false);
+    setLocationRelativeTo(null);
+    setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-    int status = 0; // 0 - nao iniciou 1 - Iniciou
-
-    // declara o painel que "segura" todas as outras "peças"
     painel = new JPanel();
     painel.setSize(910, 550);
     painel.setLayout(null);
@@ -99,12 +92,12 @@ public class Janela extends JFrame { // inicio da classe
         botaoCodificacaoManchesterDiferencial.setEnabled(false);
         mensagem = JOptionPane.showInputDialog(null, "Digite a mensagem:");
         campoTransmissora.setText("Mensagem: " + mensagem);
+        iniciar.setEnabled(false);
         semaforo.release();
       }
     });
     painel.add(iniciar);
 
-    // Declara RadioButtons
     botaoCodificacaoBinaria = new JRadioButton("Codificacao Binaria");
     botaoCodificacaoBinaria.setActionCommand("Coficicacao Binaria");
     botaoCodificacaoBinaria.addActionListener(new ActionListener() {
@@ -156,7 +149,6 @@ public class Janela extends JFrame { // inicio da classe
     painelRadio.setBackground(new Color(0, 0, 0, 0));
     painel.add(painelRadio);
 
-    // campo onde a mensagem que sera transmitida sera exibida
     campoTransmissora = new JTextArea("");
     campoTransmissora.setFont(new Font("Calibri", 1, 15));
     campoTransmissora.setForeground(Color.blue);
@@ -166,7 +158,6 @@ public class Janela extends JFrame { // inicio da classe
     scrollTransmissora.setLocation(31, 119);
     painel.add(scrollTransmissora);
 
-    // campo onde a mensagem que foi recebida eh exibida
     campoReceptora = new JTextArea("");
     campoReceptora.setFont(new Font("Calibri", 1, 15));
     campoReceptora.setForeground(Color.blue);
@@ -176,7 +167,6 @@ public class Janela extends JFrame { // inicio da classe
     scrollReceptora.setLocation(553, 119);
     painel.add(scrollReceptora);
 
-    // label que mostra o tipo de codificacao selecionado
     labelCodificacaoTransmissao = new JLabel("", SwingConstants.CENTER);
     labelCodificacaoTransmissao.setSize(311, 29);
     labelCodificacaoTransmissao.setLocation(33, 270);
@@ -185,7 +175,6 @@ public class Janela extends JFrame { // inicio da classe
     labelCodificacaoTransmissao.setVisible(true);
     painel.add(labelCodificacaoTransmissao);
 
-    // label que mostra o tipo de decodificacao selecionado
     labelCodificacaoRecepcao = new JLabel("", SwingConstants.CENTER);
     labelCodificacaoRecepcao.setSize(311, 29);
     labelCodificacaoRecepcao.setLocation(555, 270);
@@ -194,7 +183,6 @@ public class Janela extends JFrame { // inicio da classe
     labelCodificacaoRecepcao.setVisible(true);
     painel.add(labelCodificacaoRecepcao);
 
-    // campo que representa o array de BITS ainda nao codificado
     campoDeTextoPalavra = new JTextArea("");
     campoDeTextoPalavra.setEditable(false);
     scrollPanePalavra = new JScrollPane(campoDeTextoPalavra);
@@ -202,7 +190,6 @@ public class Janela extends JFrame { // inicio da classe
     scrollPanePalavra.setLocation(31, 187);
     painel.add(scrollPanePalavra);
 
-    // campo que representa o array de BITS codificado
     campoDeTextoCodificado = new JTextArea("");
     campoDeTextoCodificado.setEditable(false);
     scrollPaneCodificado = new JScrollPane(campoDeTextoCodificado);
@@ -210,7 +197,6 @@ public class Janela extends JFrame { // inicio da classe
     scrollPaneCodificado.setLocation(31, 328);
     painel.add(scrollPaneCodificado);
 
-    // campo que representa o array de BITS a ser decodificado
     campoDeTextoDecodificado = new JTextArea("");
     campoDeTextoDecodificado.setEditable(false);
     scrollPaneDecodificado = new JScrollPane(campoDeTextoDecodificado);
@@ -218,7 +204,6 @@ public class Janela extends JFrame { // inicio da classe
     scrollPaneDecodificado.setLocation(553, 328);
     painel.add(scrollPaneDecodificado);
 
-    // campo que representa o array de BITS decodificado
     campoDeTextoDecodificadoPalavra = new JTextArea("");
     campoDeTextoDecodificadoPalavra.setEditable(false);
     scrollPaneDecodificadoPalavra = new JScrollPane(campoDeTextoDecodificadoPalavra);
@@ -226,13 +211,12 @@ public class Janela extends JFrame { // inicio da classe
     scrollPaneDecodificadoPalavra.setLocation(553, 187);
     painel.add(scrollPaneDecodificadoPalavra);
 
-    // imagem de fundo (utilizei do PDF)
     imagemBackground = new ImageIcon(getClass().getResource("Background.png"));
     background = new JLabel(imagemBackground);
     background.setSize(910, 550);
     background.setVisible(true);
     painel.add(background);
 
-    this.setVisible(true); // deixa a janela visivel
-  } // fim do construtor
-} // fim da classe
+    this.setVisible(true);
+  }
+}
