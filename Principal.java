@@ -1,9 +1,9 @@
 /* *********************************************************************************
 * Autor: Lucas de Oliveira Alves Flores                                            *
 * Matricula: 201911916                                                             *
-* Inicio: 27 de julho de 2021                                    	                 *
-* Ultima alteracao: 03 de agosto de 2021                                           *
-* Funcao: Simular Tranmissao e Recepcao de Dados pela Camada Fisica                *
+* Inicio: 16 de agosto de 2021                                    	               *
+* Ultima alteracao: 19 de agosto de 2021                                           *
+* Funcao: Simular os algoritmos de enquadramentos da camada de enolace de dados    *
 ********************************************************************************** */
 
 /* *********************************************************************************
@@ -13,6 +13,7 @@
 ********************************************************************************** */
 
 import java.util.LinkedList;
+import java.util.Scanner;
 
 import javax.swing.ImageIcon;
 
@@ -28,25 +29,68 @@ public class Principal {
   }
 
   public static void AplicacaoTransmissora() { // Inicio Aplicacao Transmissora
-    try {
-      janela.semaforo.acquire();
-    } catch (InterruptedException ex) {
-    }
+    /*
+     * try { janela.semaforo.acquire(); } catch (InterruptedException ex) { }
+     */
 
     /*
      * Chamada da Camada de Aplicacao Transmissora apenas depois que a mensagem foi
      * digitada e o semaforo receber um release
      */
-    CamadaDeAplicacaoTransmissora(janela.mensagem);
+    Scanner ler = new Scanner(System.in);
+
+    System.out.println("Digite a mensagem: ");
+    String mensagem = ler.nextLine();
+
+    CamadaDeAplicacaoTransmissora(mensagem);
   } // Fim AplicacaoTransmissora
 
   public static void CamadaDeAplicacaoTransmissora(String mensagem) {// Inicio Camada de Aplicacao Transmissora
+    // Chamada da Enlace De Dados
+    CamadaEnlaceDadosTransmissora(mensagem);
+  } // Fim Camada de Aplicacao Transmissora
 
-    // Conversao de cada Caractere da String mensagem para um array de String
+  public static void CamadaEnlaceDadosTransmissora(String mensagem) {
+
+    mensagem = CamadaEnlaceDadosTransmissoraEnquadramento(mensagem);
+
+    // Chamada da CamadaFisicaTransmissora
+    CamadaFisicaTransmissora(mensagem);
+
+  }
+
+  public static String CamadaEnlaceDadosTransmissoraEnquadramento(String mensagem) {
+    int tipoDeEnquadramento = 0;
+    String mensagemEnquadrada = "";
+    System.out.println("\nMensagem Chegando para Enquadramento:\n " + mensagem);
+    switch (tipoDeEnquadramento) {
+      case 0:
+        mensagemEnquadrada = CamadaDeEnlaceTransmissoraEnquadramentoContagemDeCaracteres(mensagem);
+        break;
+    }
+    System.out.println("\nMensagem Enquadrada:\n " + mensagemEnquadrada);
+
+    return mensagemEnquadrada;
+  }
+
+  public static String CamadaDeEnlaceTransmissoraEnquadramentoContagemDeCaracteres(String mensagem) {
+    if (mensagem.length() > 3) {
+      System.out.println("\nPassando recursivamente:\n " + mensagem.substring(3, mensagem.length() - 1));
+      return "3" + mensagem.substring(0, 3)
+          + CamadaDeEnlaceTransmissoraEnquadramentoContagemDeCaracteres(mensagem.substring(3, mensagem.length()));
+    } else {
+      return mensagem.length() + mensagem;
+    }
+  }
+
+  public static void CamadaFisicaTransmissora(String mensagemEnquadrada) { // Inicio da Camada Fisica Transmissora
+
+    // Conversao de cada Caractere da String mensagemEnquadrada para um array de
+    // String
     // contendo os respectivos Binarios
-    String[] quadro = new String[mensagem.length()];
-    for (int i = 0; i < mensagem.length(); i++) {
-      char converterAscii = mensagem.charAt(i);
+    String[] quadro = new String[mensagemEnquadrada.length()];
+    for (int i = 0; i < mensagemEnquadrada.length(); i++) {
+      char converterAscii = mensagemEnquadrada.charAt(i);
       int codigoAscii = (int) converterAscii;
       String inserir = Integer.toBinaryString(codigoAscii);
       if (inserir.length() < 8) {
@@ -79,11 +123,6 @@ public class Principal {
       }
     }
 
-    // Chamada da CamadaFisicaTransmissora
-    CamadaFisicaTransmissora(bits);
-  } // Fim Camada de Aplicacao Transmissora
-
-  public static void CamadaFisicaTransmissora(int bits[]) { // Inicio da Camada Fisica Transmissora
     int[] fluxoBrutoDeBits = new int[bits.length * 2];
     switch (tipoDeCodificacao) {
       case 0:
@@ -181,7 +220,7 @@ public class Principal {
       }
 
       try {
-        Thread.sleep(25);
+        Thread.sleep(81);
       } catch (InterruptedException ex) {
         Thread.currentThread().interrupt();
       }
@@ -271,9 +310,26 @@ public class Principal {
         bits = CamadaFisicaReceptoraCodificacaoManchesterDiferencial(fluxoBrutoDeBits);
         break;
     }
+    String aux = "";
 
+    for (int i = 0; i < bits.length; i++) {
+      /* Trecho de Codigo apenas para exibicao na Interface */
+      aux = aux.concat("" + bits[i]);
+      janela.campoDeTextoDecodificadoPalavra.setText(aux);
+      try {
+        Thread.sleep(25);
+      } catch (InterruptedException ex) {
+        Thread.currentThread().interrupt();
+      }
+    }
+
+    String mensagemEnquadrada = "";
+    for (int i = 0; i < bits.length / 8; i++) {
+      mensagemEnquadrada = mensagemEnquadrada
+          .concat("" + (char) Integer.parseInt(aux.substring(i * 8, (i * 8) + 8), 2));
+    }
     // Chamada CamadaAplicacaoReceptora
-    CamadaDeAplicacaoReceptora(bits);
+    CamadaEnlaceDadosReceptora(mensagemEnquadrada);
   } // Fim da Camada Fisica Receptora
 
   // Inicio da Camada Fisica Receptora de Decoficacao Manchester
@@ -324,26 +380,24 @@ public class Principal {
     return bits;
   } // Fim da Camada Fisica Receptora de Decoficacao Manchester Diferencial
 
-  // Inicio da Camada de Aplicacao Receptora
-  public static void CamadaDeAplicacaoReceptora(int bits[]) {
-    String aux = "";
-
-    for (int i = 0; i < bits.length; i++) {
-      /* Trecho de Codigo apenas para exibicao na Interface */
-      aux = aux.concat("" + bits[i]);
-      janela.campoDeTextoDecodificadoPalavra.setText(aux);
-      try {
-        Thread.sleep(25);
-      } catch (InterruptedException ex) {
-        Thread.currentThread().interrupt();
-      }
-    }
-
+  public static void CamadaEnlaceDadosReceptora(String mensagemEnquadrada) {
     String mensagem = "";
-    for (int i = 0; i < bits.length / 8; i++) {
-      mensagem = mensagem.concat("" + (char) Integer.parseInt(aux.substring(i * 8, (i * 8) + 8), 2));
-    }
 
+    mensagem = CamadaEnlaceDadosReceptoraEnquadramento(mensagemEnquadrada);
+
+    CamadaDeAplicacaoReceptora(mensagem);
+  }
+
+  public static String CamadaEnlaceDadosReceptoraEnquadramento(String mensagemEnquadrada) {
+    /**
+     * TODO Implementar a verificação e o desenquadramento
+     */
+
+    return "retorno";
+  }
+
+  // Inicio da Camada de Aplicacao Receptora
+  public static void CamadaDeAplicacaoReceptora(String mensagem) {
     // Chamada AplicacaoReceptora
     AplicacaoReceptora(mensagem);
   } // Fim da Camada de Aplicacao Receptora
