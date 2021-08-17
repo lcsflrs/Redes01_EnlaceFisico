@@ -60,12 +60,15 @@ public class Principal {
   }
 
   public static String CamadaEnlaceDadosTransmissoraEnquadramento(String mensagem) {
-    int tipoDeEnquadramento = 0;
+    int tipoDeEnquadramento = 1;
     String mensagemEnquadrada = "";
     System.out.println("\nMensagem Chegando para Enquadramento:\n " + mensagem);
     switch (tipoDeEnquadramento) {
       case 0:
         mensagemEnquadrada = CamadaDeEnlaceTransmissoraEnquadramentoContagemDeCaracteres(mensagem);
+        break;
+      case 1:
+        mensagemEnquadrada = CamadaDeEnlaceTransmissoraEnquadramentoInsercaoDeBytes(mensagem);
         break;
     }
     System.out.println("\nMensagem Enquadrada:\n " + mensagemEnquadrada);
@@ -75,11 +78,47 @@ public class Principal {
 
   public static String CamadaDeEnlaceTransmissoraEnquadramentoContagemDeCaracteres(String mensagem) {
     if (mensagem.length() > 3) {
-      System.out.println("\nPassando recursivamente:\n " + mensagem.substring(3, mensagem.length() - 1));
-      return "3" + mensagem.substring(0, 3)
+      // System.out.println("\nPassando recursivamente:\n " + mensagem.substring(3,
+      // mensagem.length() - 1));
+      return "4" + mensagem.substring(0, 3)
           + CamadaDeEnlaceTransmissoraEnquadramentoContagemDeCaracteres(mensagem.substring(3, mensagem.length()));
     } else {
-      return mensagem.length() + mensagem;
+      return (mensagem.length() + 1) + mensagem;
+    }
+  }
+
+  public static String CamadaDeEnlaceTransmissoraEnquadramentoInsercaoDeBytes(String mensagem) {
+    System.out.println("\nInsercaoDeBytes Mensagem: " + mensagem);
+    if (mensagem.length() > 3) {
+      String aux = mensagem.substring(0, 3);
+      String aux2 = "F";
+      for (int i = 0; i < aux.length(); i++) {
+        if (aux.charAt(i) == 'F') {
+          aux2 = aux2 + "EF";
+        } else if (aux.charAt(i) == 'E') {
+          aux2 = aux2 + "EE";
+        } else {
+          aux2 = aux2 + aux.charAt(i);
+        }
+      }
+      aux2 = aux2 + "F";
+      System.out.println("Aux2: " + aux2);
+      return aux2 + CamadaDeEnlaceTransmissoraEnquadramentoInsercaoDeBytes(mensagem.substring(3, mensagem.length()));
+    } else {
+      String aux = mensagem.substring(0, mensagem.length());
+      String aux2 = "F";
+      for (int i = 0; i < aux.length(); i++) {
+        if (aux.charAt(i) == 'F') {
+          aux2 = aux2 + "EF";
+        } else if (aux.charAt(i) == 'E') {
+          aux2 = aux2 + "EE";
+        } else {
+          aux2 = aux2 + aux.charAt(i);
+        }
+      }
+      aux2 = aux2 + "F";
+      System.out.println("Aux2: " + aux2);
+      return aux2;
     }
   }
 
@@ -108,7 +147,7 @@ public class Principal {
       binario += quadro[i];
       janela.campoDeTextoPalavra.setText(binario);
       try {
-        Thread.sleep(30);
+        Thread.sleep(5);
       } catch (InterruptedException ex) {
         Thread.currentThread().interrupt();
       }
@@ -142,7 +181,7 @@ public class Principal {
       mensagemCodificada += fluxoBrutoDeBits[i];
       janela.campoDeTextoCodificado.setText(mensagemCodificada);
       try {
-        Thread.sleep(25);
+        Thread.sleep(5);
       } catch (InterruptedException ex) {
         Thread.currentThread().interrupt();
       }
@@ -220,7 +259,7 @@ public class Principal {
       }
 
       try {
-        Thread.sleep(81);
+        Thread.sleep(5);
       } catch (InterruptedException ex) {
         Thread.currentThread().interrupt();
       }
@@ -273,7 +312,7 @@ public class Principal {
     for (int k = 0; k < fila.size(); k++) {
       janela.bits[k].setIcon(new ImageIcon("__.png"));
       try {
-        Thread.sleep(25);
+        Thread.sleep(5);
       } catch (InterruptedException ex) {
         Thread.currentThread().interrupt();
       }
@@ -292,7 +331,7 @@ public class Principal {
       mensagem += fluxoBrutoDeBits[i];
       janela.campoDeTextoDecodificado.setText(mensagem);
       try {
-        Thread.sleep(25);
+        Thread.sleep(5);
       } catch (InterruptedException ex) {
         Thread.currentThread().interrupt();
       }
@@ -317,7 +356,7 @@ public class Principal {
       aux = aux.concat("" + bits[i]);
       janela.campoDeTextoDecodificadoPalavra.setText(aux);
       try {
-        Thread.sleep(25);
+        Thread.sleep(5);
       } catch (InterruptedException ex) {
         Thread.currentThread().interrupt();
       }
@@ -383,17 +422,61 @@ public class Principal {
   public static void CamadaEnlaceDadosReceptora(String mensagemEnquadrada) {
     String mensagem = "";
 
-    mensagem = CamadaEnlaceDadosReceptoraEnquadramento(mensagemEnquadrada);
+    // System.out.println("Mensagem Enquadrada Receptora: \n" + mensagemEnquadrada);
+    CamadaEnlaceDadosReceptoraEnquadramento(mensagemEnquadrada);
 
+  }
+
+  public static void CamadaEnlaceDadosReceptoraEnquadramento(String mensagemEnquadrada) {
+    String mensagem = "";
+    // System.out.println("\nCamada Receptora Enquadramento Mensagem Enquadrada: " +
+    // mensagemEnquadrada);
+    int tipoDeEnquadramento = 1;
+
+    switch (tipoDeEnquadramento) {
+      case 0:
+        mensagem = CamadaEnlaceDadosReceptoraEnquadramentoContagemDeCaracteres(mensagemEnquadrada);
+        break;
+      case 1:
+        mensagem = CamadaEnlaceDadosReceptoraEnquadramentoInsercaoDeBytes(mensagemEnquadrada);
+        break;
+    }
+
+    System.out.println("\n\nMensagem Desenquadrada: " + mensagem);
     CamadaDeAplicacaoReceptora(mensagem);
   }
 
-  public static String CamadaEnlaceDadosReceptoraEnquadramento(String mensagemEnquadrada) {
-    /**
-     * TODO Implementar a verificação e o desenquadramento
-     */
+  public static String CamadaEnlaceDadosReceptoraEnquadramentoContagemDeCaracteres(String mensagemEnquadrada) {
+    if (mensagemEnquadrada.length() > 4) {
+      // System.out.println("\nRetirando:\n " + mensagemEnquadrada.substring(1, 4));
+      return mensagemEnquadrada.substring(1, 4) + CamadaEnlaceDadosReceptoraEnquadramentoContagemDeCaracteres(
+          mensagemEnquadrada.substring(4, mensagemEnquadrada.length()));
+    } else {
+      // System.out.println("\nRetirando:\n " + mensagemEnquadrada.substring(1,
+      // mensagemEnquadrada.length()));
+      return mensagemEnquadrada.substring(1, mensagemEnquadrada.length());
+    }
+  }
 
-    return "retorno";
+  public static String CamadaEnlaceDadosReceptoraEnquadramentoInsercaoDeBytes(String mensagemEnquadrada) {
+    String mensagem = "";
+    for (int i = 1; i < mensagemEnquadrada.length(); i++) {
+      if (mensagemEnquadrada.charAt(i) == 'F') {
+        if (mensagemEnquadrada.charAt(i - 1) == 'E') {
+          mensagem = mensagem + 'F';
+        }
+      } else if (mensagemEnquadrada.charAt(i) == 'E') {
+        if (mensagemEnquadrada.charAt(i - 1) == 'E') {
+          char[] aux = mensagemEnquadrada.toCharArray();
+          aux[i] = 'X';
+          mensagemEnquadrada = String.valueOf(aux);
+          mensagem = mensagem + 'E';
+        }
+      } else {
+        mensagem = mensagem + mensagemEnquadrada.charAt(i);
+      }
+    }
+    return mensagem;
   }
 
   // Inicio da Camada de Aplicacao Receptora
